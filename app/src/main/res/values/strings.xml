@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Treinamento Jedi Android</string>
+    <string name="text_kind">Tipo: </string>
+    <string name="text_age">Idade: </string>
+</resources>

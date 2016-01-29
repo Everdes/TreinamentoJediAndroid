@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:paddingTop="@dimen/list_item_vertical_margin"
+    android:gravity="center_vertical">
 
     <TextView
         android:id="@+id/tv_name"
@@ -42,6 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_name"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_toEndOf="@id/tv_age"
         android:layout_toRightOf="@id/tv_age"
         android:text="@string/text_kind"
@@ -56,5 +58,12 @@
         android:layout_toRightOf="@id/tv_description_kind"
         android:textSize="@dimen/text_view_detail" />
 
+    <View
+        android:id="@+id/viewSeparator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tv_kind"
+        android:layout_marginTop="@dimen/list_item_vertical_margin"
+        android:background="@color/dividerColor"/>
 
 </RelativeLayout>

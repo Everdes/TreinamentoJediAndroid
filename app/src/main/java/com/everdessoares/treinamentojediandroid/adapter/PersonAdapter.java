@@ -1,6 +1,7 @@
 package com.everdessoares.treinamentojediandroid.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,19 +14,29 @@ import com.everdessoares.treinamentojediandroid.interfaces.OnItemLongClickListen
 import com.everdessoares.treinamentojediandroid.model.bean.Person;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Wolfstein on 07/01/2016.
  */
 public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder> {
 
-    ArrayList<Person> mList;
-    LayoutInflater mInflater;
+    private Set<Integer> mItemsChecked;
+    private ArrayList<Person> mList;
+    private ArrayList<Person> mListDeleted;
+    private Context mContext;
+    private LayoutInflater mInflater;
     private OnItemClickListener mOnItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
 
     public PersonAdapter(ArrayList<Person> persons, Context context) {
+        mItemsChecked = new HashSet<>();
         mList = persons;
+        mListDeleted = new ArrayList<>();
+        mContext = context;
         mInflater = LayoutInflater.from(context);
     }
 
@@ -43,6 +54,15 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder
         holder.tvName.setText(person.getName());
         holder.tvAge.setText(String.valueOf(person.getAge()));
         holder.tvKind.setText(person.getKind());
+
+        if (isItemChecked(position))
+            holder.mView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.dividerColor));
+        else
+            holder.mView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorTransparent));
+    }
+
+    public boolean isItemChecked(int position) {
+        return mItemsChecked.contains(Integer.valueOf(position));
     }
 
     @Override
@@ -58,14 +78,56 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder
         mOnItemLongClickListener = onItemLongClickListener;
     }
 
-    public void delete(int position) {
-        mList.remove(position);
-        notifyItemRemoved(position);
+    public void delete() {
+        for (int i = mList.size() - 1; i >= 0; i--) {
+            if (isItemChecked(i))
+                mListDeleted.add(mList.remove(i));
+        }
+
+//        notifyItemRemoved(position);
+
+    }
+
+    public void setItemChecked(int position) {
+        if (isItemChecked(position))
+            mItemsChecked.remove(position);
+        else
+            mItemsChecked.add(position);
+
+        notifyDataSetChanged();
+    }
+
+    public void clearItemsChecked() {
+        mItemsChecked.clear();
+        notifyDataSetChanged();
+    }
+
+    public int totalItemChecked() {
+        return mItemsChecked.size();
+    }
+
+    public void undoDelete() {
+        for (Person person : mListDeleted) {
+            mList.add(person);
+        }
+
+        this.sort();
+        notifyDataSetChanged();
+        mListDeleted.clear();
+    }
+
+    private void sort() {
+        Collections.sort(mList, new Comparator<Person>() {
+            @Override
+            public int compare(Person p1, Person p2) {
+                return p1.getName().compareTo(p2.getName());
+            }
+        });
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        View view;
+        View mView;
 
         private TextView tvName;
         private TextView tvAge;
@@ -74,13 +136,13 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
 
-            view = itemView;
+            mView = itemView;
 
-            tvName = (TextView) view.findViewById(R.id.tv_name);
-            tvAge = (TextView) view.findViewById(R.id.tv_age);
-            tvKind = (TextView) view.findViewById(R.id.tv_kind);
+            tvName = (TextView) mView.findViewById(R.id.tv_name);
+            tvAge = (TextView) mView.findViewById(R.id.tv_age);
+            tvKind = (TextView) mView.findViewById(R.id.tv_kind);
 
-            view.setOnClickListener(new View.OnClickListener() {
+            mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
@@ -91,7 +153,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder
                 }
             });
 
-            view.setOnLongClickListener(new View.OnLongClickListener() {
+            mView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     int position = getAdapterPosition();

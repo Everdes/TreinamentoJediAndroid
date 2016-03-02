@@ -10,4 +10,6 @@ public class Constantes {
     public static final String ROBOT = "Robô";
     public static final String VILLAIN = "Vilão";
 
+    public static final String BASE_URL = "http://192.168.0.10:8080/TreinamentoJediAndroid/";
+
 }

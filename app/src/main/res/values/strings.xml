@@ -106,4 +106,8 @@
     </string>
     <string name="action_settings">Settings</string>
     <string name="action_save">Salvar</string>
+    <string name="failure_person_list">Falha ao consultar os personagens</string>
+    <string name="edit_age">Idade</string>
+    <string name="person_saved">Personagem salvo com sucesso</string>
+    <string name="person_save_failure">Ocorreu um problema ao salvar o personagem</string>
 </resources>

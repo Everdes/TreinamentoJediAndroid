@@ -20,18 +20,25 @@ import android.widget.Toast;
 import com.everdessoares.treinamentojediandroid.adapter.PersonAdapter;
 import com.everdessoares.treinamentojediandroid.interfaces.OnItemClickListener;
 import com.everdessoares.treinamentojediandroid.interfaces.OnItemLongClickListener;
+import com.everdessoares.treinamentojediandroid.interfaces.PersonAPI;
 import com.everdessoares.treinamentojediandroid.model.bean.Person;
 import com.everdessoares.treinamentojediandroid.ui.activities.NewPersonActivity;
 import com.everdessoares.treinamentojediandroid.util.Constantes;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
     RecyclerView mRecyclerView;
     PersonAdapter mAdapter;
 
-    ArrayList<Person> mPersons;
+    List<Person> mPersons;
 
     ActionMode mActionMode;
 
@@ -44,15 +51,39 @@ public class MainActivity extends AppCompatActivity {
 
         configureRecyclerView();
 
-        createPersons();
-
-        createAdapter();
+        getData();
 
         FloatingActionButton fabNewPerson = (FloatingActionButton) findViewById(R.id.fab_new_person);
         fabNewPerson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, NewPersonActivity.class));
+            }
+        });
+    }
+
+    private void getData() {
+        Retrofit retrofit = new Retrofit.
+                Builder().
+                baseUrl(Constantes.BASE_URL).
+                addConverterFactory(GsonConverterFactory.create()).
+                build();
+
+        PersonAPI personAPI = retrofit.create(PersonAPI.class);
+
+        Call<List<Person>> persons = personAPI.list();
+
+        persons.enqueue(new Callback<List<Person>>() {
+            @Override
+            public void onResponse(Call<List<Person>> call, Response<List<Person>> response) {
+                mPersons = response.body();
+
+                createAdapter();
+            }
+
+            @Override
+            public void onFailure(Call<List<Person>> call, Throwable t) {
+                Toast.makeText(MainActivity.this, getString(R.string.failure_person_list), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -106,42 +137,6 @@ public class MainActivity extends AppCompatActivity {
                 super.onScrolled(recyclerView, dx, dy);
             }
         });
-    }
-
-    private void createPersons() {
-        mPersons = new ArrayList<>();
-
-        Person padawan = new Person();
-        padawan.setId(1);
-        padawan.setName("Anakin Skywalker");
-        padawan.setKind(Constantes.PADAWAN);
-        padawan.setAge(18);
-
-        mPersons.add(padawan);
-
-        Person jedi = new Person();
-        jedi.setId(2);
-        jedi.setName("Obi-Wan Kenobi");
-        jedi.setKind(Constantes.JEDI);
-        jedi.setAge(30);
-
-        mPersons.add(jedi);
-
-        Person robot = new Person();
-        robot.setId(3);
-        robot.setName("C3PO");
-        robot.setKind(Constantes.ROBOT);
-        robot.setAge(200);
-
-        mPersons.add(robot);
-
-        Person villain = new Person();
-        villain.setId(3);
-        villain.setName("Darth Vader");
-        villain.setKind(Constantes.VILLAIN);
-        villain.setAge(50);
-
-        mPersons.add(villain);
     }
 
     private SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {

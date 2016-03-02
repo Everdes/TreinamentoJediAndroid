@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,14 +26,14 @@ import java.util.Set;
 public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder> {
 
     private Set<Integer> mItemsChecked;
-    private ArrayList<Person> mList;
+    private List<Person> mList;
     private ArrayList<Person> mListDeleted;
     private Context mContext;
     private LayoutInflater mInflater;
     private OnItemClickListener mOnItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
 
-    public PersonAdapter(ArrayList<Person> persons, Context context) {
+    public PersonAdapter(List<Person> persons, Context context) {
         mItemsChecked = new HashSet<>();
         mList = persons;
         mListDeleted = new ArrayList<>();
@@ -53,7 +54,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder
 
         holder.tvName.setText(person.getName());
         holder.tvAge.setText(String.valueOf(person.getAge()));
-        holder.tvKind.setText(person.getKind());
+        holder.tvKind.setText(String.valueOf(person.getKind()));
 
         if (isItemChecked(position))
             holder.mView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.dividerColor));

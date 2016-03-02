@@ -1,13 +1,13 @@
 package com.everdessoares.treinamentojediandroid.model.bean;
 
-/**
+/*
  * Created by Wolfstein on 07/01/2016.
  */
 public class Person {
 
     private int id;
     private String name;
-    private String kind;
+    private int kind;
     private int age;
 
     public int getId() {
@@ -26,11 +26,11 @@ public class Person {
         this.name = name;
     }
 
-    public String getKind() {
+    public int getKind() {
         return kind;
     }
 
-    public void setKind(String kind) {
+    public void setKind(int kind) {
         this.kind = kind;
     }
 
